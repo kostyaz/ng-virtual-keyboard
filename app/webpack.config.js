@@ -84,10 +84,6 @@ const config = {
 };
 
 if (process.env.NODE_ENV === 'prod') {
-  config.optimization = {
-      minimize: false
-  };
-
   config.module.rules.push({
     test: /\.ts$/,
     use: [
