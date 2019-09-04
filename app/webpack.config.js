@@ -84,13 +84,9 @@ const config = {
 };
 
 if (process.env.NODE_ENV === 'prod') {
-  config.plugins.push(
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false,
-      }
-    })
-  );
+  config.optimization = {
+      minimize: false
+  };
 
   config.module.rules.push({
     test: /\.ts$/,

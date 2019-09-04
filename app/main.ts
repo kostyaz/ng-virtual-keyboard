@@ -1,6 +1,6 @@
 // polyfills, comment the following out for debugging purpose
-import 'core-js/es6';
-import 'core-js/es7/reflect';
+import 'core-js/es';
+import 'core-js/es/reflect';
 import 'zone.js/dist/zone';
 
 // The browser platform with a compiler
