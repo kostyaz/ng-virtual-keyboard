@@ -146,10 +146,7 @@ export class VirtualKeyboardComponent implements OnInit, OnDestroy {
       }, 0);
     });
 
-    if (this.inputElement.nativeElement.value.length) {
-      this.virtualKeyboardService.setCaretPosition(this.inputElement.nativeElement.value.length);
-    }
-
+    this.caretPosition = NaN;
     this.maxLength = this.inputElement.nativeElement.maxLength > 0 ? this.inputElement.nativeElement.maxLength : '';
 
     this.checkDisabled();
@@ -234,7 +231,8 @@ export class VirtualKeyboardComponent implements OnInit, OnDestroy {
       // Update caret position
       this.virtualKeyboardService.setCaretPosition(this.caretPosition + 1);
     } else {
-      value = `${this.inputElement.nativeElement.value}${keyValue}`;
+      value = keyValue;
+      this.virtualKeyboardService.setCaretPosition(1);
     }
 
     // And finally set new value to input
@@ -274,7 +272,8 @@ export class VirtualKeyboardComponent implements OnInit, OnDestroy {
             this.virtualKeyboardService.setCaretPosition(this.caretPosition - 1);
           }
         } else {
-          this.inputElement.nativeElement.value = currentValue.substring(0, currentValue.length - 1);
+          this.inputElement.nativeElement.value = '';
+          this.virtualKeyboardService.setCaretPosition(1);
         }
 
         // Set focus to keyboard input
