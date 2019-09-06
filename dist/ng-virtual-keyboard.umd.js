@@ -235,6 +235,8 @@ var NgVirtualKeyboardDirective = /** @class */ (function () {
         this.dialog = dialog;
         this.opened = false;
         this.focus = true;
+        this.okButton = 'OK';
+        this.cancelButton = 'Cancel';
     }
     NgVirtualKeyboardDirective.prototype.onWindowBlur = function () {
         this.focus = false;
@@ -244,9 +246,6 @@ var NgVirtualKeyboardDirective = /** @class */ (function () {
         setTimeout(function () {
             _this.focus = true;
         }, 0);
-    };
-    NgVirtualKeyboardDirective.prototype.onFocus = function () {
-        this.openKeyboard();
     };
     NgVirtualKeyboardDirective.prototype.onClick = function () {
         this.openKeyboard();
@@ -264,6 +263,8 @@ var NgVirtualKeyboardDirective = /** @class */ (function () {
             dialogRef.componentInstance.layout = this.getLayout();
             dialogRef.componentInstance.placeholder = this.getPlaceHolder();
             dialogRef.componentInstance.type = this.getType();
+            dialogRef.componentInstance.okButton = this.okButton;
+            dialogRef.componentInstance.cancelButton = this.cancelButton;
             dialogRef
                 .afterClosed()
                 .subscribe(function () {
@@ -334,6 +335,14 @@ var NgVirtualKeyboardDirective = /** @class */ (function () {
         __metadata("design:type", String)
     ], NgVirtualKeyboardDirective.prototype, "type", void 0);
     __decorate([
+        core_1.Input('ng-virtual-keyboard-ok-button'),
+        __metadata("design:type", String)
+    ], NgVirtualKeyboardDirective.prototype, "okButton", void 0);
+    __decorate([
+        core_1.Input('ng-virtual-keyboard-cancel-button'),
+        __metadata("design:type", String)
+    ], NgVirtualKeyboardDirective.prototype, "cancelButton", void 0);
+    __decorate([
         core_1.HostListener('window:blur'),
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
@@ -345,12 +354,6 @@ var NgVirtualKeyboardDirective = /** @class */ (function () {
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
     ], NgVirtualKeyboardDirective.prototype, "onWindowFocus", null);
-    __decorate([
-        core_1.HostListener('focus'),
-        __metadata("design:type", Function),
-        __metadata("design:paramtypes", []),
-        __metadata("design:returntype", void 0)
-    ], NgVirtualKeyboardDirective.prototype, "onFocus", null);
     __decorate([
         core_1.HostListener('click'),
         __metadata("design:type", Function),
@@ -448,6 +451,7 @@ var VirtualKeyboardComponent = /** @class */ (function () {
                 VirtualKeyboardComponent_1.setSelectionRange(_this.keyboardInput.nativeElement, caretPosition, caretPosition);
             }, 0);
         });
+        this.oldValue = this.inputElement.nativeElement.value;
         this.caretPosition = NaN;
         this.maxLength = this.inputElement.nativeElement.maxLength > 0 ? this.inputElement.nativeElement.maxLength : '';
         this.checkDisabled();
@@ -461,10 +465,17 @@ var VirtualKeyboardComponent = /** @class */ (function () {
         this.virtualKeyboardService.reset();
     };
     /**
-     * Method to close virtual keyboard dialog
+     * Method to close virtual keyboard dialog while saving changes
      */
-    VirtualKeyboardComponent.prototype.close = function () {
+    VirtualKeyboardComponent.prototype.confirm = function () {
         this.dialogRef.close();
+    };
+    /**
+     * Method to close virtual keyboard dialog without saving changes
+     */
+    VirtualKeyboardComponent.prototype.cancel = function () {
+        this.dialogRef.close();
+        this.inputElement.nativeElement.value = this.oldValue;
     };
     /**
      * Method to update caret position. This is called on click event in virtual keyboard input element.
@@ -540,10 +551,10 @@ var VirtualKeyboardComponent = /** @class */ (function () {
     VirtualKeyboardComponent.prototype.handleSpecialKey = function (event) {
         switch (event.keyValue) {
             case 'Enter':
-                this.close();
+                this.confirm();
                 break;
             case 'Escape':
-                this.close();
+                this.cancel();
                 break;
             case 'Backspace':
                 var currentValue = this.inputElement.nativeElement.value;
@@ -608,8 +619,8 @@ var VirtualKeyboardComponent = /** @class */ (function () {
     VirtualKeyboardComponent = VirtualKeyboardComponent_1 = __decorate([
         core_1.Component({
             selector: 'virtual-keyboard',
-            template: "\n    <div class=\"container\">\n      <div fxLayout=\"column\">\n        <mat-form-field>\n          <button class=\"close\" color=\"primary\" mat-button mat-mini-fab\n            (click)=\"close()\"\n          >\n            <mat-icon>check</mat-icon>\n          </button>\n    \n          <input type=\"{{type}}\"\n            matInput\n            #keyboardInput\n            (click)=\"updateCaretPosition()\"\n            [(ngModel)]=\"inputElement.nativeElement.value\" placeholder=\"{{ placeholder }}\"\n            [maxLength]=\"maxLength\"\n          />\n        </mat-form-field>\n    \n        <div fxLayout=\"row\" fxLayoutAlign=\"center center\"\n          *ngFor=\"let row of layout; let rowIndex = index\"\n          [attr.data-index]=\"rowIndex\"\n        >\n          <virtual-keyboard-key\n            *ngFor=\"let key of row; let keyIndex = index\"\n            [key]=\"key\"\n            [disabled]=\"disabled\"\n            [attr.data-index]=\"keyIndex\"\n            (keyPress)=\"keyPress($event)\"\n          ></virtual-keyboard-key>\n        </div>\n      </div>\n    </div>\n  ",
-            styles: ["\n    .close {\n      position: relative;\n      float: right;\n      top: -16px;\n      right: 0;\n      margin-bottom: -40px;\n    }\n  \n    .mat-input-container {\n      margin: -16px 0;\n      font-size: 32px;\n    }\n  \n    .mat-input-element:disabled {\n      color: currentColor;\n    }\n\n    :host /deep/ .mat-input-placeholder {\n      top: 10px !important;\n      font-size: 24px !important;\n    }\n  "]
+            template: "\n    <div class=\"container\">\n      <div fxLayout=\"column\">\n        <mat-form-field>\n          <input type=\"{{type}}\" placeholder=\"{{placeholder}}\"\n            matInput\n            #keyboardInput\n            (click)=\"updateCaretPosition()\"\n            [(ngModel)]=\"inputElement.nativeElement.value\"\n            [maxLength]=\"maxLength\"\n          />\n        </mat-form-field>\n    \n        <div fxLayout=\"row\" fxLayoutAlign=\"center center\"\n          *ngFor=\"let row of layout; let rowIndex = index\"\n          [attr.data-index]=\"rowIndex\"\n        >\n          <virtual-keyboard-key\n            *ngFor=\"let key of row; let keyIndex = index\"\n            [key]=\"key\"\n            [disabled]=\"disabled\"\n            [attr.data-index]=\"keyIndex\"\n            (keyPress)=\"keyPress($event)\"\n          ></virtual-keyboard-key>\n        </div>\n        <div class=\"control-buttons\" fxLayout=\"row-reverse\">\n          <button class=\"ok-cancel-button\" color=\"primary\" mat-raised-button\n            (click)=\"cancel()\"\n          >\n            {{cancelButton}}\n          </button>\n          <button class=\"ok-cancel-button\" color=\"primary\" mat-raised-button\n            (click)=\"confirm()\"\n          >\n            {{okButton}}\n          </button>\n      </div>\n    </div>\n    </div>\n  ",
+            styles: ["\n    .control-buttons {\n      margin-top: 16px;\n    }\n\n    .ok-cancel-button {\n      min-height: 64px;\n      min-width: 132px;\n      padding: 10px;\n      margin: 2px;\n      font-size: 32px;\n      line-height: 32px;\n    }\n  \n    .mat-input-container {\n      margin: -16px 0;\n      font-size: 32px;\n    }\n  \n    .mat-input-element:disabled {\n      color: currentColor;\n    }\n\n    :host /deep/ .mat-input-placeholder {\n      top: 10px !important;\n      font-size: 24px !important;\n    }\n  "]
         }),
         __metadata("design:paramtypes", [material_1.MatDialogRef,
             virtual_keyboard_service_1.VirtualKeyboardService])

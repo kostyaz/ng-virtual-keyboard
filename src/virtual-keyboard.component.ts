@@ -11,17 +11,11 @@ import { KeyPressInterface } from './key-press.interface';
     <div class="container">
       <div fxLayout="column">
         <mat-form-field>
-          <button class="close" color="primary" mat-button mat-mini-fab
-            (click)="close()"
-          >
-            <mat-icon>check</mat-icon>
-          </button>
-    
-          <input type="{{type}}"
+          <input type="{{type}}" placeholder="{{placeholder}}"
             matInput
             #keyboardInput
             (click)="updateCaretPosition()"
-            [(ngModel)]="inputElement.nativeElement.value" placeholder="{{ placeholder }}"
+            [(ngModel)]="inputElement.nativeElement.value"
             [maxLength]="maxLength"
           />
         </mat-form-field>
@@ -38,16 +32,33 @@ import { KeyPressInterface } from './key-press.interface';
             (keyPress)="keyPress($event)"
           ></virtual-keyboard-key>
         </div>
+        <div class="control-buttons" fxLayout="row-reverse">
+          <button class="ok-cancel-button" color="primary" mat-raised-button
+            (click)="cancel()"
+          >
+            {{cancelButton}}
+          </button>
+          <button class="ok-cancel-button" color="primary" mat-raised-button
+            (click)="confirm()"
+          >
+            {{okButton}}
+          </button>
       </div>
+    </div>
     </div>
   `,
   styles: [`
-    .close {
-      position: relative;
-      float: right;
-      top: -16px;
-      right: 0;
-      margin-bottom: -40px;
+    .control-buttons {
+      margin-top: 16px;
+    }
+
+    .ok-cancel-button {
+      min-height: 64px;
+      min-width: 132px;
+      padding: 10px;
+      margin: 2px;
+      font-size: 32px;
+      line-height: 32px;
     }
   
     .mat-input-container {
@@ -75,9 +86,12 @@ export class VirtualKeyboardComponent implements OnInit, OnDestroy {
   public type: string;
   public disabled: boolean;
   public maxLength: number|string;
+  public okButton: string;
+  public cancelButton: string;
 
   private caretPosition: number;
   private shift = false;
+  private oldValue: any;
 
   /**
    * Helper method to set cursor in input to correct place.
@@ -146,6 +160,7 @@ export class VirtualKeyboardComponent implements OnInit, OnDestroy {
       }, 0);
     });
 
+    this.oldValue = this.inputElement.nativeElement.value;
     this.caretPosition = NaN;
     this.maxLength = this.inputElement.nativeElement.maxLength > 0 ? this.inputElement.nativeElement.maxLength : '';
 
@@ -162,10 +177,18 @@ export class VirtualKeyboardComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Method to close virtual keyboard dialog
+   * Method to close virtual keyboard dialog while saving changes
    */
-  public close(): void {
+  public confirm(): void {
     this.dialogRef.close();
+  }
+
+  /**
+   * Method to close virtual keyboard dialog without saving changes
+   */
+  public cancel(): void {
+    this.dialogRef.close();
+    this.inputElement.nativeElement.value = this.oldValue;
   }
 
   /**
@@ -251,10 +274,10 @@ export class VirtualKeyboardComponent implements OnInit, OnDestroy {
   private handleSpecialKey(event: KeyPressInterface): void {
     switch (event.keyValue) {
       case 'Enter':
-        this.close();
+        this.confirm();
         break;
       case 'Escape':
-        this.close();
+        this.cancel();
         break;
       case 'Backspace':
         const currentValue = this.inputElement.nativeElement.value;

@@ -13,8 +13,11 @@ export declare class VirtualKeyboardComponent implements OnInit, OnDestroy {
     type: string;
     disabled: boolean;
     maxLength: number | string;
+    okButton: string;
+    cancelButton: string;
     private caretPosition;
     private shift;
+    private oldValue;
     /**
      * Helper method to set cursor in input to correct place.
      *
@@ -47,9 +50,13 @@ export declare class VirtualKeyboardComponent implements OnInit, OnDestroy {
      */
     ngOnDestroy(): void;
     /**
-     * Method to close virtual keyboard dialog
+     * Method to close virtual keyboard dialog while saving changes
      */
-    close(): void;
+    confirm(): void;
+    /**
+     * Method to close virtual keyboard dialog without saving changes
+     */
+    cancel(): void;
     /**
      * Method to update caret position. This is called on click event in virtual keyboard input element.
      */

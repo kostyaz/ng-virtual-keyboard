@@ -9,9 +9,10 @@ export declare class NgVirtualKeyboardDirective {
     layout: KeyboardLayout | string;
     placeholder: string;
     type: string;
+    okButton: string;
+    cancelButton: string;
     onWindowBlur(): void;
     onWindowFocus(): void;
-    onFocus(): void;
     onClick(): void;
     /**
      * Constructor of the class.

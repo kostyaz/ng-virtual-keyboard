@@ -25,6 +25,8 @@ var NgVirtualKeyboardDirective = /** @class */ (function () {
         this.dialog = dialog;
         this.opened = false;
         this.focus = true;
+        this.okButton = 'OK';
+        this.cancelButton = 'Cancel';
     }
     NgVirtualKeyboardDirective.prototype.onWindowBlur = function () {
         this.focus = false;
@@ -34,9 +36,6 @@ var NgVirtualKeyboardDirective = /** @class */ (function () {
         setTimeout(function () {
             _this.focus = true;
         }, 0);
-    };
-    NgVirtualKeyboardDirective.prototype.onFocus = function () {
-        this.openKeyboard();
     };
     NgVirtualKeyboardDirective.prototype.onClick = function () {
         this.openKeyboard();
@@ -54,6 +53,8 @@ var NgVirtualKeyboardDirective = /** @class */ (function () {
             dialogRef.componentInstance.layout = this.getLayout();
             dialogRef.componentInstance.placeholder = this.getPlaceHolder();
             dialogRef.componentInstance.type = this.getType();
+            dialogRef.componentInstance.okButton = this.okButton;
+            dialogRef.componentInstance.cancelButton = this.cancelButton;
             dialogRef
                 .afterClosed()
                 .subscribe(function () {
@@ -124,6 +125,14 @@ var NgVirtualKeyboardDirective = /** @class */ (function () {
         __metadata("design:type", String)
     ], NgVirtualKeyboardDirective.prototype, "type", void 0);
     __decorate([
+        core_1.Input('ng-virtual-keyboard-ok-button'),
+        __metadata("design:type", String)
+    ], NgVirtualKeyboardDirective.prototype, "okButton", void 0);
+    __decorate([
+        core_1.Input('ng-virtual-keyboard-cancel-button'),
+        __metadata("design:type", String)
+    ], NgVirtualKeyboardDirective.prototype, "cancelButton", void 0);
+    __decorate([
         core_1.HostListener('window:blur'),
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
@@ -135,12 +144,6 @@ var NgVirtualKeyboardDirective = /** @class */ (function () {
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
     ], NgVirtualKeyboardDirective.prototype, "onWindowFocus", null);
-    __decorate([
-        core_1.HostListener('focus'),
-        __metadata("design:type", Function),
-        __metadata("design:paramtypes", []),
-        __metadata("design:returntype", void 0)
-    ], NgVirtualKeyboardDirective.prototype, "onFocus", null);
     __decorate([
         core_1.HostListener('click'),
         __metadata("design:type", Function),

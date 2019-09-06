@@ -23,6 +23,8 @@ export class NgVirtualKeyboardDirective {
   @Input('ng-virtual-keyboard-layout') layout: KeyboardLayout|string;
   @Input('ng-virtual-keyboard-placeholder') placeholder: string;
   @Input('ng-virtual-keyboard-type') type: string;
+  @Input('ng-virtual-keyboard-ok-button') okButton: string = 'OK';
+  @Input('ng-virtual-keyboard-cancel-button') cancelButton: string = 'Cancel';
 
   @HostListener('window:blur')
   onWindowBlur() {
@@ -34,11 +36,6 @@ export class NgVirtualKeyboardDirective {
     setTimeout(() => {
       this.focus = true;
     }, 0);
-  }
-
-  @HostListener('focus')
-  onFocus() {
-    this.openKeyboard();
   }
 
   @HostListener('click')
@@ -71,6 +68,8 @@ export class NgVirtualKeyboardDirective {
       dialogRef.componentInstance.layout = this.getLayout();
       dialogRef.componentInstance.placeholder = this.getPlaceHolder();
       dialogRef.componentInstance.type = this.getType();
+      dialogRef.componentInstance.okButton = this.okButton;
+      dialogRef.componentInstance.cancelButton = this.cancelButton;
 
       dialogRef
         .afterClosed()
