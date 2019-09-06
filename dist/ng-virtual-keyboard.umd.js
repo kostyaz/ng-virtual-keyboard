@@ -448,9 +448,7 @@ var VirtualKeyboardComponent = /** @class */ (function () {
                 VirtualKeyboardComponent_1.setSelectionRange(_this.keyboardInput.nativeElement, caretPosition, caretPosition);
             }, 0);
         });
-        if (this.inputElement.nativeElement.value.length) {
-            this.virtualKeyboardService.setCaretPosition(this.inputElement.nativeElement.value.length);
-        }
+        this.caretPosition = NaN;
         this.maxLength = this.inputElement.nativeElement.maxLength > 0 ? this.inputElement.nativeElement.maxLength : '';
         this.checkDisabled();
     };
@@ -524,7 +522,8 @@ var VirtualKeyboardComponent = /** @class */ (function () {
             this.virtualKeyboardService.setCaretPosition(this.caretPosition + 1);
         }
         else {
-            value = "" + this.inputElement.nativeElement.value + keyValue;
+            value = keyValue;
+            this.virtualKeyboardService.setCaretPosition(1);
         }
         // And finally set new value to input
         this.inputElement.nativeElement.value = value;
@@ -560,7 +559,8 @@ var VirtualKeyboardComponent = /** @class */ (function () {
                     }
                 }
                 else {
-                    this.inputElement.nativeElement.value = currentValue.substring(0, currentValue.length - 1);
+                    this.inputElement.nativeElement.value = '';
+                    this.virtualKeyboardService.setCaretPosition(1);
                 }
                 // Set focus to keyboard input
                 this.keyboardInput.nativeElement.focus();
